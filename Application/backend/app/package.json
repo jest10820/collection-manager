@@ -1,0 +1,12 @@
+{
+  "name": "beCollectionManager",
+  "version": "1.0.0",
+  "keywords": [
+    "server"
+  ],
+  "author": "mogu88",
+  "dependencies": {
+    "restify": "4.3.0"
+  },
+  "private": true
+}
