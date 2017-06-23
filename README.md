@@ -1,1 +1,1 @@
-# Manga Collection
+# MANGA COLLECTION
