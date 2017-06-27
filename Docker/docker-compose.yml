@@ -1,0 +1,55 @@
+version: '3.2'
+
+volumes:
+  vol-prometheus-data: {}
+  vol-grafana-data: {}
+
+networks:
+  net-monitor:
+    driver: bridge
+
+services:
+  prometheus:
+    image: cm/cm-prometheus
+    volumes:
+      - ./prometheus/config/:/etc/prometheus/
+      - vol-prometheus-data:/prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - cadvisor
+    networks:
+      - net-monitor
+  node-exporter:
+    image: cm/cm-node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - net-monitor
+  cadvisor:
+    image: cm/cm-cadvisor 
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - net-monitor
+  grafana:
+    image: cm/cm-grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - vol-grafana-data:/var/lib/grafana
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_DASHBOARDS_JSON_ENABLED=true
+      - GF_DASHBOARDS_JSON_PATH=/etc/grafana/custom_dashboards
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    networks:
+      - net-monitor
