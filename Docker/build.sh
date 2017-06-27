@@ -1,2 +1,8 @@
 #!/bin/bash
-docker build -t="collection-manager/cm-be-nodejs" ../Application/backend
+
+set -ex
+
+docker build -t="cm/cm-grafana" grafana
+docker build -t="cm/cm-prometheus" prometheus 
+docker build -t="cm/cm-cadvisor" cadvisor
+docker build -t="cm/cm-node-exporter" prometheus/node-exporter
