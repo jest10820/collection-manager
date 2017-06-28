@@ -1,0 +1,64 @@
+version: '3.2'
+
+volumes:
+  vol-pgsql-data: {}
+  vol-zabbix-data: {}
+  vol-zabbix-agent-data: {}
+
+networks:
+  net-monitor:
+    driver: bridge 
+  net-db-zabbix:
+    driver: bridge
+
+services:
+  postgresql:
+    image: cm/cm-postgresql
+    networks:
+      - net-db-zabbix
+    volumes:
+      - vol-pgsql-data://var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=zabbix
+  zabbix-server:
+    image: cm/cm-zabbix-server
+    networks:
+      - net-db-zabbix
+      - net-monitor
+    volumes:
+      - vol-zabbix-data:/var/lib/zabbix
+      - vol-zabbix-data:/usr/lib/zabbix
+    depends_on:
+      - postgresql
+    environment:
+      - DB_SERVER_HOST=postgresql
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=1234
+  zabbix-web:
+    image: cm/cm-zabbix-web
+    networks:
+      - net-db-zabbix
+      - net-monitor
+    ports:
+      - "8888:80"
+    depends_on:
+      - zabbix-server
+    environment:
+      - DB_SERVER_HOST=postgresql
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=1234
+      - ZBX_SERVER_HOST=zabbix-server
+  zabbix-agent:
+    image: cm/cm-zabbix-agent
+    privileged: true
+    networks:
+      - net-monitor
+    depends_on:
+      - zabbix-server
+    environment:
+      - ZBX_SERVER_HOST=zabbix-server
+    volumes:
+      - vol-zabbix-agent-data:/var/lib/zabbix
+      - vol-zabbix-agent-data:/etc/zabbix
