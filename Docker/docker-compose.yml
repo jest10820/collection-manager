@@ -6,7 +6,7 @@ volumes:
 
 networks:
   net-monitor:
-    driver: bridge
+    driver: overlay 
 
 services:
   prometheus:
@@ -15,9 +15,10 @@ services:
       - ./prometheus/config/:/etc/prometheus/
       - vol-prometheus-data:/prometheus
     ports:
-      - 9090:9090
-    depends_on:
-      - cadvisor
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: host
     networks:
       - net-monitor
   node-exporter:
@@ -30,6 +31,7 @@ services:
       - net-monitor
   cadvisor:
     image: cm/cm-cadvisor 
+    hostname: '{{.Node.ID}}'
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -39,10 +41,11 @@ services:
       - net-monitor
   grafana:
     image: cm/cm-grafana
-    depends_on:
-      - prometheus
     ports:
-      - 3000:3000
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
     volumes:
       - vol-grafana-data:/var/lib/grafana
     environment:
