@@ -33,6 +33,11 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+    ports:
+      - target: 9100
+        published: 9100
+        protocol: tcp
+        mode: host
     networks:
       - net-monitor
     deploy:
@@ -49,6 +54,11 @@ services:
       - net-monitor
     deploy:
       mode: global
+    ports:
+      - target: 8080
+        published: 8888
+        protocol: tcp
+        mode: host
   grafana:
     image: cm/cm-grafana
     ports:
