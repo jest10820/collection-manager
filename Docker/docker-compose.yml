@@ -21,14 +21,22 @@ services:
         mode: host
     networks:
       - net-monitor
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
   node-exporter:
     image: cm/cm-node-exporter
+    hostname: '{{.Node.ID}}'
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     networks:
       - net-monitor
+    deploy:
+      mode: global
   cadvisor:
     image: cm/cm-cadvisor 
     hostname: '{{.Node.ID}}'
@@ -39,6 +47,8 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     networks:
       - net-monitor
+    deploy:
+      mode: global
   grafana:
     image: cm/cm-grafana
     ports:
@@ -56,3 +66,8 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     networks:
       - net-monitor
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
