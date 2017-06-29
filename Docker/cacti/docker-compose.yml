@@ -1,0 +1,17 @@
+version: '3.2'
+
+networks:
+  net-monitor-cacti:
+    driver: bridge
+
+services:
+  cacti:
+    image: cm/cm-cacti
+    ports:
+      - "8088:80"
+      - "161:161"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./backups/:/var/backups/
+    networks:
+      - net-monitor-cacti
