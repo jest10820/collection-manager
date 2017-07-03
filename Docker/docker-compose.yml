@@ -3,10 +3,13 @@ version: '3.2'
 volumes:
   vol-prometheus-data: {}
   vol-grafana-data: {}
+  vol-cassandra-data: {}
 
 networks:
   net-monitor:
-    driver: overlay 
+    driver: overlay
+  net-db:
+    driver: overlay
 
 services:
   prometheus:
@@ -81,3 +84,17 @@ services:
       placement:
         constraints:
           - node.role == manager
+  cassandra:
+    image: cm/cm-cassandra
+    volumes:
+      - vol-cassandra-data:/var/lib/cassandra
+    networks:
+      - net-monitor
+      - net-db
+    ports:
+      - target: 7070
+        published: 7070
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
