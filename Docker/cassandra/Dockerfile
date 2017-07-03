@@ -9,6 +9,6 @@ RUN wget http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaag
 COPY prom-java-exporter/cassandra-config.yml cassandra-config.yml
 
 # Set as JVM_OPTS in Cassandra env file
-RUN echo 'JVM_OPTS="$JVM_OPTS -javaagent:'$PWD/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar=7070:$CASSANDRA_CONFIG/cassandra-config.yml'"' >> $CASSANDRA_CONFIG/cassandra-env.sh
+RUN echo 'JVM_OPTS="$JVM_OPTS -javaagent:'$PWD/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar=7070:$PWD/cassandra-config.yml'"' >> $CASSANDRA_CONFIG/cassandra-env.sh
 
 EXPOSE 7070
