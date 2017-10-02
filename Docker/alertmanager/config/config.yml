@@ -1,0 +1,17 @@
+route:
+  receiver: 'slack'
+  repeat_interval: 3h #3h
+  group_interval: 5m #5m
+  group_wait: 1m #1m
+  routes:
+  - receiver: 'slack'
+
+receivers:
+  - name: 'slack'
+    slack_configs:
+      - send_resolved: true
+        api_url: ''
+        username: 'Prometheus - Alerts'
+        channel: '#alert-manager'
+        text: '{{ .CommonAnnotations.summary }} ---> {{ .CommonAnnotations.description }}'
+        icon_emoji: ':ghost:'
