@@ -1,0 +1,7 @@
+ALERT APIHighRequest
+  IF sum(rate(http_request_counter[1m])) by (path, instance) > 0
+  FOR 1m
+  ANNOTATIONS {
+    summary = "High number of requests request latency on {{ $labels.instance }}",
+    description = "{{ $labels.instance }} (path {{ $labels.path}}) has a high number of requests above (current value: {{ $value }})",
+  }
