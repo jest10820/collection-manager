@@ -1,0 +1,22 @@
+version: '2.3'
+
+services:
+  prometheus:
+    image: cm/cm-prometheus
+    volumes:
+      - ./prometheus/config/:/etc/prometheus/
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api-test
+      - alertmanager
+    command: ["-config.file=/etc/prometheus/prometheus-alert.yml", "-storage.local.path=/prometheus", "-alertmanager.url=http://alertmanager:9093"]
+  api-test:
+    image: cm/cm-api-test
+    ports:
+      - "8888:8080"
+  alertmanager:
+    image: cm/cm-alertmanager
+    volumes:
+      - ./alertmanager/config/:/etc/alertmanager/
+
